@@ -10,11 +10,11 @@ The receiver:
 
 ### Receiver schematic
 
-[](docs/ESP32-cardboard-robot-rx.png)
+[!](docs/ESP32-cardboard-robot-rx.png)
 
 ### Transmitter schematic
 
-[](docs/ESP32-cardboard-robot-tx.png)
+[!](docs/ESP32-cardboard-robot-tx.png)
 
 
 ### Folders
