@@ -19,9 +19,9 @@ The receiver:
 
 ### Folders
 
-* The [docs/ESP32-espnow-cardboard-robot-rx](docs/ESP32-espnow-cardboard-robot-rx) contains the Platorm IO code for the receiver
-* The ()[docs/ESP32-espnow-cardboard-robot-tx] contains the Platorm IO code for the transimtter
-* 
+* The [ESP32-espnow-cardboard-robot-rx](https://github.com/guido57/ESP32-cardboard-robot/tree/main/ESP32-espnow-cardboard-robot-rx) folder contains the Platorm IO code for the receiver
+* The [ESP32-espnow-cardboard-robot-tx](https://github.com/guido57/ESP32-cardboard-robot/tree/main/ESP32-espnow-cardboard-robot-tx) folder contains the Platorm IO code for the trnasmitter
+  
 
 
 
