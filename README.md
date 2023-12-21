@@ -14,13 +14,13 @@ The receiver:
 
 ### Transmitter schematic
 
-[![](docs/ESP32-cardboard-robot-tx.png)
+![](docs/ESP32-cardboard-robot-tx.png)
 
 
 ### Folders
 
-* The [docs/ESP32-espnow-cardboard-robot-rx] contains the Platormio code for the receiver
-* The (docs/ESP32-espnow-cardboard-robot-tx) contains the Platormio code for the transimtter
+* The [docs/ESP32-espnow-cardboard-robot-rx] contains the Platorm IO code for the receiver
+* The ()[docs/ESP32-espnow-cardboard-robot-tx] contains the Platorm IO code for the transimtter
 * 
 
 
