@@ -7,7 +7,9 @@ The receiver:
 * decodes the position of the joystick and activate the two motors properly: Forward Backward Left Right
 * generates different light patterns on the 12 LEDs ring (rainbow and similars) and on the two LED eyes.
 
-### Schematic
+### Schematics
+
+(ciao )[docs/ESP32-cardboard-robot-rx.png]
 
 
 
