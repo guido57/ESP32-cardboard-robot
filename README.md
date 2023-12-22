@@ -14,6 +14,8 @@ The Receiver:
 
 ![](docs/ESP32-cardboard-robot-rx.png)
 
+
+
 ### Transmitter schematic
 
 ![](docs/ESP32-cardboard-robot-tx.png)
