@@ -49,10 +49,10 @@ Adafruit_NeoPixel strip(LED_COUNT, RING_LED_PIN, NEO_GRB + NEO_KHZ800);
 long last_data_rcv = -1;
 int speedL = 0;
 int speedR = 0;
-int deltaspeed = 150;
+int deltaspeed = 100;
 char cmd = 0x00;
 
-void getcmd(int vx, int vy){
+void getcmd_old(int vx, int vy){
   
   int speed = sqrt((vx-2048)*(vx-2048)+(vy-2048)*(vy-2048))/8;
   if(speed>255) speed=255;
@@ -137,6 +137,188 @@ void getcmd(int vx, int vy){
   }
 }
 
+void getcmd_old2(int vx, int vy){
+  float x = vx - 2048.0;
+  float y = vy - 2048.0; 
+  
+  int speed = sqrt((vx-2048)*(vx-2048)+(vy-2048)*(vy-2048))/8;
+  if(speed>255) speed=255;
+  if(speed > 50)
+    speed = 150 + (speed - 50) * 105 / (255-50);
+  else{
+    cmd = 0x00;
+    ledcWrite(0, 0);   
+    ledcWrite(1, 0);   
+    ledcWrite(2, 0);   
+    ledcWrite(3, 0);   
+    return;
+  }    
+
+  float k = 0.4142; // tan(pi/8)=0.4142
+  
+  if(x >= - k*y && x < k*y){
+    cmd = 0x0A; // FWD
+    speedL = speed;
+    speedR = speed;
+    ledcWrite(0, 0);   
+    ledcWrite(1, speedL);   
+    ledcWrite(2, 0);   
+    ledcWrite(3, speedR);   
+    return;
+  }
+  if(y >= x*k && y < x / k){
+    cmd = 0x08; // FWD Right
+    speedL = speed - deltaspeed;
+    speedR = speed;
+    ledcWrite(0, 0);   
+    ledcWrite(1, speedL);   
+    ledcWrite(2, 0);   
+    ledcWrite(3, speedR);   
+    return;
+  }
+  if(y >= - x*k  && y < -x / k){
+    cmd = 0x02; // FWD left
+    speedL = speed ;
+    speedR = speed - deltaspeed;
+    ledcWrite(0, 0);   
+    ledcWrite(1, speedL);   
+    ledcWrite(2, 0);   
+    ledcWrite(3, speedR);   
+    return;
+  }
+
+  if(y >= x*k  && y < -x * k){
+    // Left
+    cmd = 0x06;
+    speedL = speed;
+    speedR = speed;
+    ledcWrite(0, 0);   
+    ledcWrite(1, speedL);   
+    ledcWrite(2, speedR);   
+    ledcWrite(3, 0);   
+    return;
+  }  
+
+  if(y >= -x*k  && y < x * k){
+    // Right
+    cmd = 0x09;
+    speedL = speed;
+    speedR = speed;
+    ledcWrite(0, speedL);   
+    ledcWrite(1, 0);   
+    ledcWrite(2, 0);   
+    ledcWrite(3, speedR);   
+    return;
+  }
+  if(y >= -x/k  && y < -x * k){
+    // BWD Right 
+    cmd = 0x01;
+    speedL = speed-deltaspeed;
+    speedR = speed;
+    ledcWrite(0, speedL);   
+    ledcWrite(1, 0);   
+    ledcWrite(2, speedR);   
+    ledcWrite(3, 0);   
+    return;
+  }
+  if(y >= x/k  && y < x * k){
+    // BWD Left 
+    cmd = 0x04;
+    speedL = speed;
+    speedR = speed-deltaspeed;
+    ledcWrite(0, speedL);   
+    ledcWrite(1, 0);   
+    ledcWrite(2, speedR);   
+    ledcWrite(3, 0);   
+    return;
+  }
+  if(x >= y*k  && x < - y * k){
+    // BWD
+    cmd = 0x05;
+    speedL = speed;
+    speedR = speed;
+    ledcWrite(0, speedL);   
+    ledcWrite(1, 0);   
+    ledcWrite(2, speedR);   
+    ledcWrite(3, 0);   
+    return;
+  }
+}
+
+// -255 <= speedX <= 255
+// -255 <= speedY <= 255
+void motors(int speedL, int speedR){
+
+  if(speedL >=0){
+    ledcWrite(2, 0);   
+    ledcWrite(3, speedL);   
+  }else{
+    ledcWrite(2, -speedL);   
+    ledcWrite(3, 0);   
+  }  
+    
+  if(speedR >=0){
+    ledcWrite(0, 0);   
+    ledcWrite(1, speedR);   
+  }else{
+    ledcWrite(0, -speedR);   
+    ledcWrite(1, -0);   
+  }  
+}
+
+// Set cmd speed speedR and speedL according to joystick x and y
+void getcmd(int vx, int vy){
+  float x = vx - 2048.0;
+  float y = vy - 2048.0; 
+  
+  double fi = atan2(x,y); 
+  if(fi<0) fi+=2*PI;
+  Serial.printf("fi=%f\r\n",fi);
+
+  int speed = sqrt((vx-2048)*(vx-2048)+(vy-2048)*(vy-2048))/8;
+  if(speed>255) speed=255;
+  if(speed > 50)
+    speed = 150 + (speed - 50) * 105 / (255-50);
+  else{
+    cmd = 0x00;
+    motors(0,0);
+    return;
+  }    
+  
+  speedR = speedL = 0;
+  if(fi >= 0 && fi < PI/2){
+    speedR = 255*cos(2*fi);
+    speedL = 255;
+  }else if(fi >= PI/2 && fi < PI){
+    speedR = -255;
+    speedL = 255*cos(2*fi-PI);
+  }else if(fi >= PI && fi < 3*PI/2){
+    speedR = 255*sin(2*fi-5*PI/2);
+    speedL = -255;
+  }else if(fi >= 3*PI/2 && fi < 2*PI){
+    speedR = 255;
+    speedL =255*sin(2*fi-7*PI/2);
+  } 
+  motors((speed*speedL)/256, (speed*speedR)/256);
+
+  if(fi >= 0 && fi < PI/8 || fi >= 7*PI/8 && fi < 2*PI){
+    cmd = 0x0A; // FWD
+  }else if(fi >= PI/8 < 3*PI/8){
+    cmd = 0x08; // FWD Right
+  }else if(fi >= 3*PI/8 < 5*PI/8){
+    cmd = 0x09; // Right
+  }else if(fi >= 5*PI/8 < 7*PI/8){
+    cmd = 0x01; // BWD Right
+  }else if(fi >= 7*PI/8 < 9*PI/8){
+    cmd = 0x05; // BWD 
+  }else if(fi >= 9*PI/8 < 11*PI/8){
+    cmd = 0x04; // BWD Left
+  }else if(fi >= 11*PI/8 < 13*PI/8){
+    cmd = 0x06; // Left
+  }else if(fi >= 13*PI/8 < 15*PI/8){
+    cmd = 0x02; // FWD Left
+  }
+}
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
@@ -461,8 +643,6 @@ void flashleds(int ledl_min_period_ms, int ledl_max_brightness, int ledr_min_per
 
 }
 
-
-bool blocking = true;
 void loop() {
 
   if(millis() > last_data_rcv + 1000){
@@ -480,7 +660,7 @@ void loop() {
       //rainbowNB(1);             
       
       // Eyes LEDs
-      flashleds(10,50,10,50);
+      flashleds(10,250,10,250);
   }
      
   //Serial.printf("cmd=%x\r\n",cmd);
