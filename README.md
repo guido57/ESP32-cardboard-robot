@@ -1,10 +1,10 @@
 # ESP32 Radio Controller for my Cardboard Robot
-An RC transmitter and receiver using two ESP32, based on ESPNOW
+An RC transmitter and receiver using two ESP32, based on (ESPNOW)[https://randomnerdtutorials.com/esp-now-esp32-arduino-ide/]
 
 The hardware projext is here [https://hackaday.io/project/194108-a-cardboard-robot](https://hackaday.io/project/194108-a-cardboard-robot)
 
 ### Overview
-The Transmitter encodes the position of the joystick and sends it via ESPNOW protocol to the Receiver.
+The Transmitter encodes the position of the joystick and sends it via (ESPNOW)[https://randomnerdtutorials.com/esp-now-esp32-arduino-ide/] protocol to the Receiver.
 
 The Receiver: 
 * decodes the position of the joystick and activate the two motors properly: Forward Backward Left Right
@@ -13,6 +13,8 @@ The Receiver:
 ### Receiver schematic
 
 ![](docs/ESP32-cardboard-robot-rx.png)
+
+
 
 ### Transmitter schematic
 
