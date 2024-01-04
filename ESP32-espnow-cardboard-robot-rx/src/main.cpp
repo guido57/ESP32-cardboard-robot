@@ -286,7 +286,7 @@ void getcmd(int vx, int vy){
   }    
   
   speedR = speedL = 0;
-  if(fi >= 0 && fi < PI/2){
+  if(fi >= 0 && fi < PI/2){++
     speedR = 255*cos(2*fi);
     speedL = 255;
   }else if(fi >= PI/2 && fi < PI){
